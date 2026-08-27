@@ -18,13 +18,14 @@ updated: 2026-08-27
 - `site/src/routes/` — prerendered route surface, including `robots.txt/+server.ts`, which is generated per environment rather than served as a static file.
 - `site/src/lib/content/` — typed content modules and their `types.ts`; the sole home of copy.
 - `site/src/lib/components/{layout,ui}/` — Header and Footer, plus twelve UI primitives that consume content and tokens.
-- `site/src/lib/styles/` — `tokens.css` (primitive, semantic, component layers) and `base.css` (element defaults, `@font-face`).
+- `site/src/lib/styles/` — `tokens.css` (primitive, semantic, component layers), `base.css` (element defaults, `@font-face`), and `tokens.ts`, which parses the stylesheet for the `/styleguide` route.
+- `design-system/` and `scripts/build-token-reference.mjs` — the token and component reference, and the generator that keeps its tables in step with `tokens.css`. Repository documents, not build inputs.
 - `site/src/lib/site-env.ts` and `env.ts` — environment resolution from `PUBLIC_SITE_ENV`.
 - `site/src/lib/dev/` — the annotate overlay and its GitHub issue-URL builder; staging only.
 - `site/scripts/` — `content-check.ts` (publish gate) and `verify-robots.mjs` (two-environment build assertion).
 - `site/static/` — assets plus `_headers`, which carries the host-level `X-Robots-Tag` for staging.
 - `site/tests/{unit,e2e,fixtures}` — Vitest server-rendering tests and Playwright tests over two servers.
-- `.github/workflows/ci.yml` — markdownlint over docs, then lint, check, unit, and verify:robots over `site/`.
+- `.github/workflows/ci.yml` — markdownlint and the token-reference staleness check over the repository documents, then lint, check, unit, and verify:robots over `site/`.
 
 ## Boundaries
 
