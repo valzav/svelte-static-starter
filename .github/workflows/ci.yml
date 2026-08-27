@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [dev, main]
+
+# Workflow-level scope: applies to every job in this file, including jobs added later.
+# A job that needs write scope (annotations beyond core.error, checks, PR comments) must
+# declare its own `permissions:` block; it does not inherit one by being added here.
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: DavidAnson/markdownlint-cli2-action@v24.2.0
+        with:
+          globs: "**/*.md"
+
+  site:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v5
+      # package_json_file is required: the action defaults to a root package.json,
+      # and this repository has none. It reads pnpm's version from `packageManager`.
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: site/package.json
+      # Must follow pnpm/action-setup: `cache: pnpm` resolves the store by running pnpm.
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: site/.node-version
+          cache: pnpm
+          cache-dependency-path: site/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm check
+      - run: pnpm test:unit
+      # Builds both environments; the only check that observes a production build.
+      - run: pnpm verify:robots

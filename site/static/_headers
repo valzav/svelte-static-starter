@@ -1,0 +1,11 @@
+# Header-level noindex for staging and every pages.dev host (ADR-0006).
+# Cloudflare Pages reads this file from the build output.
+# Replace the first host with your own staging domain; no rule may match production.
+https://dev.example.com/*
+  X-Robots-Tag: noindex
+
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex

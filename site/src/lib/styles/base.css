@@ -1,0 +1,101 @@
+@font-face {
+	font-family: 'Source Sans 3';
+	src: url('/fonts/source-sans-3-variable.woff2') format('woff2');
+	font-weight: 200 900;
+	font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	background: var(--ds-bg-solid);
+	scroll-padding-top: var(--ds-header-height);
+}
+
+body {
+	margin: 0;
+	background: var(--ds-bg);
+	color: var(--ds-fg);
+	font-family: var(--ds-font-sans);
+	font-size: var(--ds-font-size-body);
+	font-weight: 400;
+	line-height: var(--ds-leading-body);
+}
+
+/* Full-page film grain keeps the large gradient fields from banding and adds material depth. */
+body::after {
+	background-image: var(--ds-grain-image);
+	content: '';
+	inset: 0;
+	opacity: var(--ds-grain-opacity);
+	pointer-events: none;
+	position: fixed;
+	z-index: 3;
+}
+
+/* The header is fixed, so page content has to start below it — the same height the
+   scroll-padding above uses, so anchored sections and the first section agree. */
+main {
+	padding-block-start: var(--ds-header-height);
+}
+
+::selection {
+	background: var(--ds-accent);
+	color: var(--ds-on-accent);
+}
+
+button,
+input,
+select,
+textarea {
+	font: inherit;
+}
+
+img,
+svg {
+	display: block;
+	max-inline-size: 100%;
+}
+
+h1,
+h2,
+h3,
+p {
+	margin: 0;
+}
+
+h1,
+h2,
+h3 {
+	font-weight: 600;
+}
+
+h1 {
+	font-size: var(--ds-font-size-h1);
+	line-height: var(--ds-leading-tight);
+}
+
+h2 {
+	font-size: var(--ds-font-size-h2);
+	line-height: var(--ds-leading-heading);
+}
+
+h3 {
+	font-size: var(--ds-font-size-h3);
+	line-height: var(--ds-leading-h3);
+}
+
+:focus-visible {
+	outline: var(--ds-focus-width) solid var(--ds-focus);
+	outline-offset: var(--ds-focus-offset);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		scroll-behavior: smooth;
+	}
+}

@@ -1,0 +1,10 @@
+{
+  // Markdown lint for CI. Line length is off for prose; MD025 is relaxed because
+  // spec and ADR front matter carries a `title:` that is not a second H1.
+  "gitignore": true,
+  "ignores": ["site/static/fonts/LICENSE.md"],
+  "config": {
+    "MD013": false,
+    "MD025": { "front_matter_title": "" }
+  }
+}
