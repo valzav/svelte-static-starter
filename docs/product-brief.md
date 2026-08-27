@@ -66,4 +66,4 @@ Each requirement below is recorded from an accepted ADR or from enforcement that
 
 - What is the first end-to-end outcome this project should prove next? The template's existing capabilities are built and tested, so the MVP journey above is unset. `valcraft-spec` needs this answer before the first feature.
 - Is the starter intended to receive ongoing upstream improvements that downstream forks pull, or is it a one-time snapshot per project? This determines whether a versioning and changelog surface is needed.
-- This repository carries its own `.markdownlint-cli2.jsonc`. A change adding one to Valcraft's Cast frame is proposed but unmerged, so no shared copy exists yet. If it lands, which copy is authoritative, and does this repository drop its own?
+- This repository carries its own `.markdownlint-cli2.jsonc` so its documents check passes without Valcraft. If the Cast frame ever ships one too, does this repository keep its copy or defer to the shared one?
