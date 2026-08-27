@@ -63,88 +63,99 @@ From the repository root:
 
 ## What is inside
 
-**Prerendering that fails loudly.** `adapter-static` with `prerender = true`, plus
-`handleMissingId: 'fail'` and `handleHttpError: 'fail'`. A broken `#anchor` or a link to a route
-that does not exist breaks the build rather than shipping (ADR-0002). You will hit this the first
-time you point a footer link at a page you have not written yet — that is the feature working.
+**Two environments that fail safe.** Staging and production differ by one variable, and anything
+that is not exactly `production` counts as staging — so a misconfigured deploy stays hidden from
+search instead of quietly indexing your work in progress. `pnpm verify:robots` builds both and
+checks each one (ADR-0006).
 
-**Two environments, failing safe.** Anything but `PUBLIC_SITE_ENV=production` is staging, so a
-missing or misspelled value stays noindex. Staging gets a robots meta, a disallowing `robots.txt`,
-and a host-level `X-Robots-Tag` via `static/_headers`; production gets none of it.
-`pnpm verify:robots` builds both and asserts each (ADR-0006).
+**Copy that cannot ship half-finished.** Every headline, number and link lives in one folder rather
+than scattered through markup, and each item is marked approved, draft, or not written yet.
+`pnpm content:check` fails on anything unfinished — run it in your production build and unapproved
+copy cannot reach the public site (ADR-0004).
 
-**Typed content with a publish gate.** Copy lives in `src/lib/content/`, never in markup. Items
-carry `status: 'approved' | 'generated' | 'stub'`, and a link without an `href` renders as plain
-text instead of a dead anchor. `pnpm content:check` walks the inventory and exits non-zero on
-anything unfinished — put it in your production build command, not in staging (ADR-0004).
+**A design system, not just a stylesheet.** Colour, type, spacing and motion are defined once, in
+three layers, so a rebrand is a change to the palette and nothing else. Components may only use
+those values; a test fails if anyone writes a raw colour into a component (ADR-0005).
 
-**Layered design tokens.** Primitive → semantic → component, dark by default, light under
-`[data-theme='light']`. Components reference tokens only; an end-to-end test asserts that no
-`.svelte` file contains a hex or `rgb()` literal (ADR-0005).
-
-**A design system that documents itself.** [`design-system/README.md`](design-system/README.md)
-carries the token-layer rules, a contract per component, the anti-patterns, and a pre-delivery
-checklist; its token tables are generated from `tokens.css` and checked in CI, so they cannot
-drift. The `/styleguide` route renders the real tokens and the real components in both themes —
-it reads `tokens.css` at build time, so a token cannot exist without appearing there.
+**Documentation that cannot go stale.**
+[`design-system/README.md`](design-system/README.md) explains the rules and what each component
+promises. The `/styleguide` page shows the real thing — every design value and every component, in
+both light and dark. Both are built from the stylesheet itself, and CI fails if they fall behind it.
 [`design-system/guidelines.md`](design-system/guidelines.md) is the brand skeleton, deliberately
-empty. The route is kept out of search by a `/styleguide*` rule in `static/_headers` rather than a
-page-level meta, which would break the production robots assertion.
+left empty for you to fill.
 
-**Twelve UI primitives.** Section, ActionLink, ContentCard, ColumnList, Metric, Pill, Accordion,
-AccordionItem, Reveal, Logo, LogoGrid, LogoTile. Accordion is native `details`/`summary` and Reveal
-and Metric both render their final state when JavaScript is off or reduced motion is on.
+**Twelve components to build pages from.** Sections, links and buttons, cards, lists, metrics, tags,
+an accordion, a scroll reveal, and a logo grid. They work with JavaScript switched off and for
+people who have asked their system to reduce motion: the accordion still opens, the counters still
+show their final numbers.
 
-**A staging-only annotate overlay.** On staging, a toggle lets a reviewer click any element,
-comment on it, and open a prefilled GitHub issue naming the element's Svelte source file, line, and
-component chain. It lives in a shadow root, never changes the page, and holds no credential.
-Production builds contain neither the overlay nor the Svelte development metadata it reads;
-`pnpm verify:robots` asserts both sides (ADR-0007).
+**A way for reviewers to point at things.** On staging, a reviewer clicks any element on the page,
+types a comment, and gets a GitHub issue pre-filled with the exact file and line that produced it —
+no more "the third card, second line". It never alters the page, holds no credentials, and is
+completely absent from production builds (ADR-0007).
 
-**A test harness that does not need a DOM.** Unit tests render components with `svelte/server`.
-Playwright runs two servers: the real preview build, and a Vite server for isolated component
-fixtures. Each SSR fixture owns a separate Vite dependency cache so parallel workers cannot race,
-and the fixture server disables HMR so a dependency re-optimization cannot reload the page
-mid-assertion.
+**Tests that do not need a browser to be useful.** Components are checked on the server where that
+is enough, and in a real browser where it is not. Isolated fixtures mean a broken page cannot take
+the whole suite down with it.
 
 ## Layout
 
+`site/` is the website — it is the only part that gets published. Everything beside it is
+documentation and delivery scaffolding, and nothing inside `site/` reads any of it.
+
 ```text
-.
-├── .github/workflows/ci.yml   # docs (markdownlint, token reference) + site (lint, check, unit, verify:robots)
-├── .markdownlint-cli2.jsonc
-├── AGENTS.md                  # agent instructions (CLAUDE.md is a symlink to it)
-├── .valcraft/config.yaml      # Valcraft tracker and delivery configuration
-├── design-system/             # token rules, component contracts, brand skeleton
-├── docs/                      # product brief, architecture overview, ADRs, plans
-├── scripts/                   # build-token-reference.mjs
-├── specs/                     # feature and quick-task contracts
-└── site/                      # the only publishable part; references nothing outside itself
-    ├── scripts/               # content-check, verify-robots
-    ├── src/lib/{components,content,dev,styles,assets}
-    ├── src/routes/            # / (demo page) and /styleguide
-    ├── static/
-    └── tests/{unit,e2e,fixtures}
+site/                     the website, and the whole deploy artifact
+├── src/routes/           the pages: / and /styleguide
+├── src/lib/components/   the twelve building blocks, plus header and footer
+├── src/lib/content/      all copy, numbers and links
+├── src/lib/styles/       colour, type, spacing and motion
+├── src/lib/assets/       logos and marks
+├── src/lib/dev/          the staging-only review overlay
+├── static/               fonts, favicon, hosting headers
+├── scripts/              the publish gate and the environment check
+└── tests/                server-rendered checks, browser checks, shared fixtures
+
+design-system/            the rules, what each component promises, the brand skeleton
+docs/                     product brief, architecture, decision records, working plans
+specs/                    what each feature has to do
+scripts/                  rebuilds the token tables in design-system/
+AGENTS.md                 standing instructions for AI agents (CLAUDE.md points here)
+.valcraft/                delivery configuration
+.github/workflows/ci.yml  runs on every push: the documents first, then the site
 ```
 
-The spec-driven frame above `site/` — `AGENTS.md`, `.valcraft/`, `docs/product-brief.md`,
-`docs/architecture/overview.md`, `docs/plans/`, `specs/` — was added by
-[Valcraft](https://github.com/valzav/valcraft) Cast, which merges around existing content rather
-than overwriting it. A project created from this template inherits it, so **rewrite the product
-brief and the architecture overview** — they describe the starter, not your project. Delete the
-frame outright if you do not use Valcraft; `site/` reads none of it.
+The template carries its own `.markdownlint-cli2.jsonc` so the documents check passes whether or
+not you use Valcraft.
 
-`.markdownlint-cli2.jsonc` is duplicated between this template and Valcraft's Cast templates on
-purpose, so CI is green without Cast. Cast's copy is the authority for the `MD025` rule.
+## Spec-driven delivery
 
-## Project documents
+The template ships with the [Valcraft](https://github.com/valzav/valcraft) project frame already in
+place: `AGENTS.md`, a product brief, an architecture overview, and the `specs/` and `docs/plans/`
+roots. Valcraft is a set of agent skills for building software with AI without losing the thread
+between sessions.
 
-Added by [Valcraft](https://github.com/valzav/valcraft) Cast. `site/` does not read any of them.
+- **Requirements live in git, not in a chat.** Features, acceptance criteria, tasks and decisions
+  carry stable IDs (`FR-001`, `AC-001`, `T-001`, `ADR-0001`) that plans, commits, tests and reviews
+  all cite. A new session picks up from the files rather than from someone else's conversation.
+- **A delivery loop that runs itself.** Foreman walks one task from plan → review → implementation
+  → review → landing, starting a fresh worker for each stage. No single session has to hold the
+  whole job in its head, and an interrupted run resumes from what is on disk.
+- **Review by someone who did not write it.** Planning, implementation and review each get a clean
+  context, so the implementer's own "it works" never counts as approval. Review can be assigned to
+  a different model entirely — Claude, Codex or Cursor — for genuinely independent eyes.
+- **You choose what waits for you.** Attended mode confirms each step; unattended keeps going.
+  Either way some things always stop for a human: writing to the release branch, closing a feature,
+  and anything escalated.
+- **Retrospectives that compound.** After a feature ships, Temper grades what actually happened and
+  proposes standing rules for `AGENTS.md`. Nothing is promoted on a single unverified incident.
 
-- [Product brief](docs/product-brief.md)
-- [Architecture overview](docs/architecture/overview.md)
-- [Architecture decisions](docs/architecture/adr/)
-- [Feature specifications](specs/)
+**Two things to do on a new project.** Rewrite [`docs/product-brief.md`](docs/product-brief.md) and
+[`docs/architecture/overview.md`](docs/architecture/overview.md) — they describe the starter, not
+your project. If you do not use Valcraft, delete `AGENTS.md`, `.valcraft/`, `specs/` and those two
+documents; nothing in `site/` depends on them.
+
+- [Product brief](docs/product-brief.md) · [Architecture overview](docs/architecture/overview.md)
+- [Architecture decisions](docs/architecture/adr/) · [Feature specifications](specs/)
 - [Agent instructions](AGENTS.md) (`CLAUDE.md` is a symlink to it)
 
 ## Licence
