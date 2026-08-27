@@ -112,6 +112,16 @@ template: it adds `AGENTS.md`, `docs/product-brief.md`, `docs/architecture/overv
 `.markdownlint-cli2.jsonc` is duplicated between this template and Valcraft's Cast templates on
 purpose, so CI is green without Cast. Cast's copy is the authority for the `MD025` rule.
 
+## Project documents
+
+Added by [Valcraft](https://github.com/valzav/valcraft) Cast. `site/` does not read any of them.
+
+- [Product brief](docs/product-brief.md)
+- [Architecture overview](docs/architecture/overview.md)
+- [Architecture decisions](docs/architecture/adr/)
+- [Feature specifications](specs/)
+- [Agent instructions](AGENTS.md) (`CLAUDE.md` is a symlink to it)
+
 ## Licence
 
 MIT, except `site/static/fonts/`, which is Source Sans 3 under the SIL Open Font License 1.1

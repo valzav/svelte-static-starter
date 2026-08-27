@@ -3,3 +3,16 @@ node_modules
 # OS
 .DS_Store
 Thumbs.db
+
+# Agent/tool artifacts
+.codebase-memory/
+.claude/settings.local.json
+.claude/*.lock
+/.valcraft/*
+!/.valcraft/config.yaml
+docs/.retro/
+
+# Secrets — references only, never values
+.env
+.env.*
+*.pem
