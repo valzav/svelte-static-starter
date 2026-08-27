@@ -13,7 +13,9 @@ const buildDir = join(siteDir, 'build');
 const headerRules = [
 	'https://dev.example.com/*',
 	'https://:project.pages.dev/*',
-	'https://:version.:project.pages.dev/*'
+	'https://:version.:project.pages.dev/*',
+	// The style guide is noindex in every environment, production included.
+	'/styleguide*'
 ];
 
 const failures = [];

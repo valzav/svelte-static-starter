@@ -74,7 +74,7 @@ test('an annotation records the Svelte source location and component chain', asy
 });
 
 test('links do not navigate in annotate mode', async ({ page }) => {
-	const link = page.locator('header nav a[href^="#"]').first();
+	const link = page.locator('header nav a[href^="/#"]').first();
 	const href = await link.getAttribute('href');
 	await link.click();
 	await expect(page.locator('#ds-annotate .form')).toBeVisible();
@@ -82,7 +82,7 @@ test('links do not navigate in annotate mode', async ({ page }) => {
 });
 
 test('a middle click on a link opens no page and keeps the URL', async ({ page, context }) => {
-	const link = page.locator('header nav a[href="#primitives"]');
+	const link = page.locator('header nav a[href="/#primitives"]');
 	await link.click({ button: 'middle' });
 	// Give an escaped default action time to open a tab before asserting that none did.
 	await page.waitForTimeout(500);
@@ -113,7 +113,7 @@ test('Escape closes the form, then leaves annotate mode', async ({ page }) => {
 
 test('Create issue opens the prefilled form and copies the body', async ({ page }) => {
 	await annotate(page, 'main h1', 'Make the headline shorter');
-	await annotate(page, 'header nav a[href="#primitives"]', 'Rename this link');
+	await annotate(page, 'header nav a[href="/#primitives"]', 'Rename this link');
 	await page.locator('#ds-annotate [data-action="issue"]').click();
 
 	const opened = await page.evaluate(() => window.__opened);

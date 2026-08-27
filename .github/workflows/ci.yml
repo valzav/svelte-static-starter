@@ -19,6 +19,9 @@ jobs:
       - uses: DavidAnson/markdownlint-cli2-action@v24.2.0
         with:
           globs: "**/*.md"
+      # The token tables in design-system/README.md are generated from tokens.css.
+      - name: Token reference is current
+        run: node scripts/build-token-reference.mjs --check
 
   site:
     runs-on: ubuntu-latest

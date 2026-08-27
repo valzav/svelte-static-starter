@@ -28,9 +28,21 @@ end-to-end test asserts that no `.svelte` file contains a hex or `rgb()` literal
   already covers theming.
 - A Svelte UI kit: brings its own visual system, which then has to be fought.
 
+## The reference is derived, not maintained
+
+Two readers, one source. `scripts/build-token-reference.mjs` regenerates the token tables in
+`design-system/README.md` and fails CI when they are stale; the `/styleguide` route parses the same
+file at build time and renders every token as a swatch or a value. Neither is a hand-kept list, so
+neither can disagree with the stylesheet.
+
+The layer a token belongs to is declared by a `/* [layer] */` comment in `tokens.css`, which is what
+both readers key on. Moving a token between layers is therefore a comment move, and is visible in a
+diff.
+
 ## Consequences
 
 - A rebrand is a change to the primitive layer and the semantic mappings; components do not move.
+- Adding a token to `tokens.css` without regenerating the reference fails CI, by design.
 - Theming is CSS-only, so it works before hydration and without JavaScript.
 - Adding a component usually means adding component-layer tokens, which keeps the file long. That
   is the intended trade: the length lives in one reviewable place.

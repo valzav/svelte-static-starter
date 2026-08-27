@@ -1,4 +1,4 @@
-/* Primitive tokens: raw brand values that components never use directly. */
+/* [primitive] Raw values. Components never reference these directly. */
 :root {
 	--ds-neutral-950: #15181c;
 	--ds-neutral-800: #2e333b;
@@ -47,7 +47,7 @@
 	--ds-duration-base: 220ms;
 	--ds-ease: cubic-bezier(0.2, 0, 0, 1);
 
-	/* Semantic tokens: dark is the default theme. */
+	/* [semantic] Role names. Dark is the default; [data-theme='light'] redefines this layer. */
 	--ds-bg: linear-gradient(135deg, #15181c 0%, #2e333b 100%);
 	--ds-bg-solid: var(--ds-neutral-950);
 	--ds-fg: var(--ds-neutral-200);
@@ -65,7 +65,7 @@
 	--ds-text-metric-leading: var(--ds-leading-metric);
 	--ds-interactive-min-target: 44px;
 
-	/* Atmosphere and depth (visual refresh 2026-08-20): alpha mixes of the fixed palette only. */
+	/* [semantic] Atmosphere and depth: alpha mixes of the palette above, never new colours. */
 	--ds-surface-strong: rgb(223 225 229 / 0.07);
 	--ds-border-strong: rgb(223 225 229 / 0.28);
 	--ds-border-accent: rgb(106 169 240 / 0.38);
@@ -89,7 +89,7 @@
 	--ds-list-marker-muted: var(--ds-fg-muted);
 	--ds-card-number-color: rgb(106 169 240 / 0.55);
 
-	/* Component tokens: later components consume these aliases. */
+	/* [component] Per-component aliases. Move one component without touching the palette. */
 	--ds-action-link-bg-primary: var(--ds-accent);
 	--ds-action-link-fg-primary: var(--ds-on-accent);
 	--ds-action-link-border-primary: none;
@@ -222,7 +222,7 @@
 	--ds-reveal-default-delay: 0ms;
 	--ds-reveal-stagger-step: 60ms;
 
-	/* Visual refresh 2026-08-20: component aliases for atmosphere, hover, and markers. */
+	/* [component] Atmosphere, hover, and marker aliases. */
 	--ds-action-link-stacked-padding: var(--ds-space-5);
 	--ds-action-link-stacked-radius: var(--ds-radius-lg);
 	--ds-action-link-stacked-primary-bg: linear-gradient(
@@ -299,7 +299,7 @@
 	--ds-accordion-answer-color: var(--ds-fg-muted);
 	--ds-accordion-chevron-color: var(--ds-fg);
 
-	/* Visual refresh 2026-08-20: light-theme atmosphere and depth. */
+	/* Light-theme atmosphere and depth. */
 	--ds-surface-strong: rgb(46 51 59 / 0.07);
 	--ds-border-strong: rgb(46 51 59 / 0.3);
 	--ds-border-accent: rgb(106 169 240 / 0.55);

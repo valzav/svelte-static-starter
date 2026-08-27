@@ -10,11 +10,13 @@ export const site = {
 	favicon: 'favicon.svg',
 	metaDescription:
 		'A prerendered SvelteKit starter: layered design tokens, a typed content model with a publish gate, and a staging-only annotate overlay.',
+	// Root-relative, not bare fragments: the header is fixed on every route, so `#primitives`
+	// would resolve against /styleguide and fail prerendering (ADR-0002 sets handleMissingId to fail).
 	navigation: [
-		{ label: 'Primitives', href: '#primitives', status: 'approved' },
-		{ label: 'Metrics', href: '#metrics', status: 'approved' },
-		{ label: 'Marks', href: '#marks', status: 'approved' },
-		{ label: 'Questions', href: '#questions', status: 'approved' },
+		{ label: 'Primitives', href: '/#primitives', status: 'approved' },
+		{ label: 'Metrics', href: '/#metrics', status: 'approved' },
+		{ label: 'Marks', href: '/#marks', status: 'approved' },
+		{ label: 'Questions', href: '/#questions', status: 'approved' },
 		{ label: 'Contact', href: 'mailto:hello@example.com', status: 'approved' }
 	] satisfies Link[]
 } as const;

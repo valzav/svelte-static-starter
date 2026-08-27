@@ -23,14 +23,15 @@ pnpm dev
 1. **`site/src/lib/content/site.ts`** — title, URL, contact address, meta description, navigation.
    Set `repo` to your `owner/name`; the annotate overlay builds its GitHub issue link from it.
 2. **`site/src/lib/styles/tokens.css`** — the primitive layer holds the palette, type scale, and
-   spacing scale. Change the values, keep the three-layer structure.
+   spacing scale. Change the values, keep the three-layer structure. Then run
+   `node scripts/build-token-reference.mjs` and check the result at `/styleguide`.
 3. **`site/src/lib/assets/logos/`** and **`site/static/favicon.svg`** — placeholder marks.
    `Logo.svelte` expects the full × symbol by dark × light matrix.
 4. **`site/static/_headers`** and **`site/scripts/verify-robots.mjs`** — both name
    `dev.example.com`. Use your staging hostname. The `:project.pages.dev` wildcard rules are already
    correct for any Cloudflare Pages project.
 5. **`site/src/lib/content/demo.ts`** and **`site/src/routes/+page.svelte`** — the demo page.
-   Delete both once you have real sections.
+   Delete both once you have real sections. Keep `/styleguide`; it is the reference, not a demo.
 6. **`site/static/fonts/`** — Source Sans 3 (SIL OFL 1.1, licence included). Replace it and the
    `@font-face` rule in `base.css` with your own self-hosted font.
 
@@ -50,7 +51,13 @@ Run from `site/`:
 | `pnpm content:check` | Reports stub and draft copy; exit 1 if any |
 | `pnpm test` | unit + e2e + verify:robots |
 
-From the repository root: `npx markdownlint-cli2 "**/*.md"`.
+From the repository root:
+
+| Command | What it does |
+| --- | --- |
+| `npx markdownlint-cli2 "**/*.md"` | Lint every Markdown file |
+| `node scripts/build-token-reference.mjs` | Rewrite the token tables in `design-system/README.md` |
+| `node scripts/build-token-reference.mjs --check` | Fail if those tables are stale (CI runs this) |
 
 ## What is inside
 
@@ -73,6 +80,15 @@ anything unfinished — put it in your production build command, not in staging 
 `[data-theme='light']`. Components reference tokens only; an end-to-end test asserts that no
 `.svelte` file contains a hex or `rgb()` literal (ADR-0005).
 
+**A design system that documents itself.** [`design-system/README.md`](design-system/README.md)
+carries the token-layer rules, a contract per component, the anti-patterns, and a pre-delivery
+checklist; its token tables are generated from `tokens.css` and checked in CI, so they cannot
+drift. The `/styleguide` route renders the real tokens and the real components in both themes —
+it reads `tokens.css` at build time, so a token cannot exist without appearing there.
+[`design-system/guidelines.md`](design-system/guidelines.md) is the brand skeleton, deliberately
+empty. The route is kept out of search by a `/styleguide*` rule in `static/_headers` rather than a
+page-level meta, which would break the production robots assertion.
+
 **Twelve UI primitives.** Section, ActionLink, ContentCard, ColumnList, Metric, Pill, Accordion,
 AccordionItem, Reveal, Logo, LogoGrid, LogoTile. Accordion is native `details`/`summary` and Reveal
 and Metric both render their final state when JavaScript is off or reduced motion is on.
@@ -93,13 +109,15 @@ mid-assertion.
 
 ```text
 .
-├── .github/workflows/ci.yml   # docs (markdownlint) + site (lint, check, unit, verify:robots)
+├── .github/workflows/ci.yml   # docs (markdownlint, token reference) + site (lint, check, unit, verify:robots)
 ├── .markdownlint-cli2.jsonc
+├── design-system/             # token rules, component contracts, brand skeleton
 ├── docs/architecture/adr/     # why the decisions above are what they are
+├── scripts/                   # build-token-reference.mjs
 └── site/                      # the only publishable part; references nothing outside itself
     ├── scripts/               # content-check, verify-robots
     ├── src/lib/{components,content,dev,styles,assets}
-    ├── src/routes/
+    ├── src/routes/            # / (demo page) and /styleguide
     ├── static/
     └── tests/{unit,e2e,fixtures}
 ```

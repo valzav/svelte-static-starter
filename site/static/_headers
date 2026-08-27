@@ -9,3 +9,9 @@ https://:project.pages.dev/*
 
 https://:version.:project.pages.dev/*
   X-Robots-Tag: noindex
+
+# The style guide is a working reference, not public content, so it stays out of search in every
+# environment. A page-level robots meta would put one on a production page, which
+# `pnpm verify:robots` forbids; a header rule keeps that assertion intact.
+/styleguide*
+  X-Robots-Tag: noindex
