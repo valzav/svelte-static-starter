@@ -32,7 +32,9 @@ pnpm dev
    correct for any Cloudflare Pages project.
 5. **`site/src/lib/content/demo.ts`** and **`site/src/routes/+page.svelte`** — the demo page.
    Delete both once you have real sections. Keep `/styleguide`; it is the reference, not a demo.
-6. **`site/static/fonts/`** — Source Sans 3 (SIL OFL 1.1, licence included). Replace it and the
+6. **`docs/product-brief.md`** and **`docs/architecture/overview.md`** — inherited from the
+   template and describing the starter itself. Rewrite them for your project, or delete the frame.
+7. **`site/static/fonts/`** — Source Sans 3 (SIL OFL 1.1, licence included). Replace it and the
    `@font-face` rule in `base.css` with your own self-hosted font.
 
 ## Commands
@@ -111,9 +113,12 @@ mid-assertion.
 .
 ├── .github/workflows/ci.yml   # docs (markdownlint, token reference) + site (lint, check, unit, verify:robots)
 ├── .markdownlint-cli2.jsonc
+├── AGENTS.md                  # agent instructions (CLAUDE.md is a symlink to it)
+├── .valcraft/config.yaml      # Valcraft tracker and delivery configuration
 ├── design-system/             # token rules, component contracts, brand skeleton
-├── docs/architecture/adr/     # why the decisions above are what they are
+├── docs/                      # product brief, architecture overview, ADRs, plans
 ├── scripts/                   # build-token-reference.mjs
+├── specs/                     # feature and quick-task contracts
 └── site/                      # the only publishable part; references nothing outside itself
     ├── scripts/               # content-check, verify-robots
     ├── src/lib/{components,content,dev,styles,assets}
@@ -122,10 +127,12 @@ mid-assertion.
     └── tests/{unit,e2e,fixtures}
 ```
 
-The repository root is deliberately empty of project documents. If you use
-[Valcraft](https://github.com/valzav/valcraft), run `valcraft:cast` in a project created from this
-template: it adds `AGENTS.md`, `docs/product-brief.md`, `docs/architecture/overview.md`,
-`docs/plans/`, and `specs/` around what is already here, merging rather than overwriting.
+The spec-driven frame above `site/` — `AGENTS.md`, `.valcraft/`, `docs/product-brief.md`,
+`docs/architecture/overview.md`, `docs/plans/`, `specs/` — was added by
+[Valcraft](https://github.com/valzav/valcraft) Cast, which merges around existing content rather
+than overwriting it. A project created from this template inherits it, so **rewrite the product
+brief and the architecture overview** — they describe the starter, not your project. Delete the
+frame outright if you do not use Valcraft; `site/` reads none of it.
 
 `.markdownlint-cli2.jsonc` is duplicated between this template and Valcraft's Cast templates on
 purpose, so CI is green without Cast. Cast's copy is the authority for the `MD025` rule.
